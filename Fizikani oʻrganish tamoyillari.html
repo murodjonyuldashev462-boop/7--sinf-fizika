@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="uz"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fizikani oʻrganish tamoyillari</title>
+<style>
+:root{--bg:#f4f1ea;--card:#fffdf8;--tx:#1f2a37;--mu:#4b5866;--ac:#2f6f8f;--act:#fff;--ok:#2e7d4f;--bad:#b3402f;--bd:#d9d2c3;--cv:#eaf3f7;--wt:#8ec5e0;--ink:#1f2a37;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161b22;--card:#1f2630;--tx:#e8edf2;--mu:#b4c0cc;--ac:#7fc3e3;--act:#10202a;--ok:#7fd19a;--bad:#f0907f;--bd:#364250;--cv:#18222c;--wt:#2f6f8f;--ink:#e8edf2;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#161b22;--card:#1f2630;--tx:#e8edf2;--mu:#b4c0cc;--ac:#7fc3e3;--act:#10202a;--ok:#7fd19a;--bad:#f0907f;--bd:#364250;--cv:#18222c;--wt:#2f6f8f;--ink:#e8edf2;color-scheme:dark}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:17px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+nav{position:sticky;top:0;z-index:5;background:var(--bg);display:flex;gap:6px;padding:8px;overflow-x:auto;border-bottom:1px solid var(--bd)}
+nav button{flex:1 0 auto}
+main{max-width:760px;margin:0 auto;padding:12px}
+h1{font-size:1.5rem;margin:.3em 0}h2{font-size:1.25rem;margin:.2em 0 .4em}p{margin:.4em 0}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px;margin:10px 0}
+button{font:inherit;min-height:48px;padding:8px 16px;border-radius:12px;border:2px solid var(--ac);background:var(--card);color:var(--tx);cursor:pointer}
+button.p,button.on,nav button.on{background:var(--ac);color:var(--act);font-weight:600}
+button:disabled{opacity:.5}
+.mod{display:block;width:100%;text-align:left;margin:8px 0;padding:14px}
+canvas{width:100%;display:block;background:var(--cv);border-radius:12px;border:1px solid var(--bd)}
+label{display:block;margin:8px 0 0}input[type=range]{width:100%;height:36px;accent-color:var(--ac)}
+input[type=number]{font:inherit;width:100px;min-height:44px;padding:4px 8px;border-radius:10px;border:2px solid var(--bd);background:var(--card);color:var(--tx)}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}.ch{display:block;width:100%;text-align:left;margin:6px 0}
+.steps{display:flex;gap:6px;margin:6px 0}.steps span{flex:1;text-align:center;padding:6px;border-radius:10px;border:2px solid var(--bd);color:var(--mu);font-weight:600}.steps .on{border-color:var(--ac);color:var(--tx)}.steps .dn{background:var(--ok);border-color:var(--ok);color:var(--act)}
+table{width:100%;border-collapse:collapse;font-size:.95rem}td,th{border-bottom:1px solid var(--bd);padding:4px;text-align:center}
+.ok{color:var(--ok);font-weight:600}.bad{color:var(--bad);font-weight:600}.mu{color:var(--mu)}
+.st{padding:8px;border-radius:10px;border:1px dashed var(--bd);margin:6px 0}.st.cur{border:2px solid var(--ac)}.st.fu{opacity:.55}
+.hide{display:none}
+</style></head><body>
+<nav id="nav"></nav>
+<main>
+<section id="v0">
+<h1>Fizikani oʻrganish tamoyillari</h1>
+<p>Fizika — tabiat haqidagi fan. Uni oʻrganish uchun kuzatamiz, tajriba qilamiz, hisoblaymiz va xulosa chiqaramiz. Modulni tanlang:</p>
+<button class="card mod" data-go="1"><b>1-modul. Ilmiy bilish yoʻli</b><br><span class="mu">Mayatnik: kuzatish → tajriba → xulosa</span></button>
+<button class="card mod" data-go="2"><b>2-modul. Masalani bosqichma-bosqich yechish</b><br><span class="mu">Tezlik va zichlik: 4 ta masala</span></button>
+<button class="card mod" data-go="3"><b>3-modul. Dars rejasi</b><br><span class="mu">Savol-muammo, simulyatsiya, mustahkamlash</span></button>
+</section>
+
+<section id="v1" class="hide">
+<div class="steps" id="st1"><span>1 Kuzatish</span><span>2 Tajriba</span><span>3 Xulosa</span></div>
+<div class="card"><p id="t1"></p>
+<canvas id="c1" height="260"></canvas>
+<div id="p1a"><div class="row"><button class="p" id="b1a">Ishga tushirish</button><button id="b1n">Savolga oʻtish</button></div></div>
+<div id="p1b" class="hide">
+<label>Ip uzunligi: <b id="o_L"></b> m<input type="range" id="L" min="0.2" max="1.5" step="0.1" value="0.8"></label>
+<label>Yuk massasi: <b id="o_M"></b> kg<input type="range" id="M" min="0.1" max="2" step="0.1" value="0.5"></label>
+<label>Burchak: <b id="o_A"></b>°<input type="range" id="A" min="5" max="40" step="5" value="15"></label>
+<div class="row"><button class="p" id="b1r">Ishga tushirish (10 tebranish)</button><button id="b1g">Xulosaga oʻtish</button></div>
+<p class="mu">Maslahat: bir paytda faqat bitta kattalikni oʻzgartiring. Vaqt 5 marta tezlashtirilgan.</p>
+<table><thead><tr><th>l, m</th><th>m, kg</th><th>α°</th><th>10 ta, s</th><th>T, s</th></tr></thead><tbody id="tb"></tbody></table></div>
+<div id="p1c" class="hide"></div>
+<p id="r1"></p></div>
+</section>
+
+<section id="v2" class="hide">
+<div class="row" id="pn"></div>
+<div class="card"><h2 id="t2"></h2><p id="q2"></p>
+<canvas id="c2" height="180"></canvas>
+<div id="sl2"></div>
+<div class="row"><button class="p" id="b2">Ishga tushirish</button></div>
+<p id="r2" class="mu"></p>
+<div id="stp"></div><p id="fb" style="font-weight:600"></p></div>
+</section>
+
+<section id="v3" class="hide">
+<div class="card"><h2>1. Savol-muammo</h2>
+<svg viewBox="0 0 320 120" width="100%" role="img" aria-label="Yogʻoch suvda suzadi, tosh choʻkadi"><rect x="10" y="40" width="300" height="75" rx="8" fill="var(--wt)" opacity=".7"/><rect x="60" y="28" width="60" height="26" rx="4" fill="#b98a55"/><polygon points="215,95 245,80 270,100 255,112 225,112" fill="#8a8f98"/><text x="90" y="20" text-anchor="middle" font-size="13" fill="var(--ink)">yogʻoch</text><text x="245" y="70" text-anchor="middle" font-size="13" fill="var(--ink)">tosh</text></svg>
+<p><b>Nima uchun yogʻoch suvda suzadi, tosh esa choʻkadi?</b> Oʻz taxminingizni aytib, simulyatsiyada tekshiring.</p></div>
+<div class="card"><h2>2. Simulyatsiya</h2>
+<canvas id="c3" height="280"></canvas>
+<div class="row" id="mt"></div>
+<label>Jism hajmi: <b id="o_V"></b> sm³<input type="range" id="V" min="100" max="1000" step="50" value="400"></label>
+<div class="row"><button class="p" id="b3">Ishga tushirish</button></div><p id="r3"></p></div>
+<div class="card"><h2>3. Mustahkamlash</h2><div id="qz"></div><div class="row"><button class="p" id="bq">Tekshirish</button></div><div id="qr"></div></div>
+</section>
+
+<section id="v4" class="hide"><h1>Umumiy xulosa</h1><div class="card"><h2>Fizikani oʻrganish tamoyillari</h2>
+<p>1. Fizika kuzatishdan boshlanadi: savol tugʻiladi, tajriba oʻtkaziladi va natijalardan xulosa chiqariladi.</p>
+<p>2. Masala yechishda “Berilgan”, “Topish kerak”ni yozamiz, formulani tanlaymiz va birliklarni moslab hisoblaymiz.</p>
+<p>3. Hodisani tushuntirish uchun kattalikni (masalan, zichlikni) model bilan tekshiramiz va bilimimizni savollar bilan mustahkamlaymiz.</p></div>
+<button class="p" data-go="0">Bosh ekranga</button></section>
+</main>
+<script>
+const $=i=>document.getElementById(i),G=9.81,PI=Math.PI;
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+let view=0;
+const names=['Bosh','1-modul','2-modul','3-modul','Xulosa'];
+$('nav').innerHTML=names.map((n,i)=>`<button data-go="${i}">${n}</button>`).join('');
+document.addEventListener('click',e=>{const b=e.target.closest('[data-go]');if(b)go(+b.dataset.go)});
+function go(i){view=i;for(let k=0;k<5;k++)$('v'+k).classList.toggle('hide',k!=i);
+document.querySelectorAll('nav button').forEach((b,k)=>b.classList.toggle('on',k==i));scrollTo(0,0);
+if(i==1)initM1();if(i==2)loadP(P2i);}
+function fit(c){const w=c.clientWidth,d=devicePixelRatio||1,h=+c.getAttribute('height');c.width=w*d;c.height=h*d;const x=c.getContext('2d');x.setTransform(d,0,0,d,0,0);return[x,w,h]}
+document.addEventListener('input',e=>{const id=e.target.id,o=$('o_'+id);if(o&&e.target.type=='range')o.textContent=(+e.target.value).toString().replace('.',',');
+if(id=='V')m3reset();});
+document.querySelectorAll('input[type=range]').forEach(r=>{const o=$('o_'+r.id);if(o)o.textContent=r.value.replace('.',',')});
+
+/* ===== 1-MODUL ===== */
+let s1=1,rows=[],pd={th:.26,om:0,run:false,t:0,cr:0,tA:0,prev:0,meas:false,sc:1,L:.8,A:15,M:.5};
+const T1=['Kuzatish: mayatnik tebranishini koʻring. Savol: <b>tebranish vaqti nimaga bogʻliq?</b>','Tajriba: kattaliklarni oʻzgartiring va 10 ta tebranish vaqtini oʻlchang. Kamida 3 ta tajriba qiling.','Xulosa: jadvalga qarab toʻgʻri xulosani tanlang.'];
+function stage(n){s1=n;$('t1').innerHTML=T1[n-1];['st1'].forEach(()=>{[...$('st1').children].forEach((s,i)=>s.className=i+1<n?'dn':i+1==n?'on':'')});
+$('p1a').classList.toggle('hide',n!=1);$('p1b').classList.toggle('hide',n!=2);$('p1c').classList.toggle('hide',n!=3);pd.run=false;$('r1').textContent='';
+if(n==1)setP(.8,15,.5,1,false);if(n==2)setP(+$('L').value,+$('A').value,+$('M').value,5,false);if(n==3)showQ1();}
+function setP(L,A,M,sc,meas){Object.assign(pd,{L,A,M,sc,meas,th:A*PI/180,om:0,t:0,cr:0,prev:A*PI/180,run:false});}
+function initM1(){rows=[];$('tb').innerHTML='';stage(1);}
+['L','M','A'].forEach(id=>$(id).addEventListener('input',()=>{if(s1==2)setP(+$('L').value,+$('A').value,+$('M').value,5,false)}));
+$('b1a').onclick=()=>{setP(.8,15,.5,1,false);pd.run=true};
+$('b1n').onclick=()=>stage(2);
+$('b1r').onclick=()=>{setP(+$('L').value,+$('A').value,+$('M').value,5,true);pd.run=true;$('r1').textContent='Oʻlchanmoqda…'};
+$('b1g').onclick=()=>{if(rows.length<3){$('r1').innerHTML='<span class="bad">Avval kamida 3 ta tajriba qiling.</span>';return}stage(3)};
+function showQ1(){const o=['Davr yuk massasiga bogʻliq, ip uzunligiga bogʻliq emas.','Davr ip uzunligiga bogʻliq, yuk massasiga bogʻliq emas.','Davr na uzunlikka, na massaga bogʻliq.','Massa katta boʻlsa, davr ham katta boʻladi.'];
+$('p1c').innerHTML=o.map((t,i)=>`<button class="ch" data-q="${i}">${t}</button>`).join('')+'<div id="x1"></div>';
+$('p1c').querySelectorAll('.ch').forEach(b=>b.onclick=()=>{const k=+b.dataset.q;$('x1').innerHTML=k==1?'<p class="ok">Toʻgʻri! Jadvalda uzunlik oshganda davr ham oshgan, massa oʻzgarganda davr deyarli oʻzgarmagan. Burchak kichik boʻlsa, u ham taʼsir qilmaydi.</p>':'<p class="bad">Xato. Jadvalni qayta koʻring: massa oʻzgarganda T oʻzgarmaganmi? Uzunlik oʻzgarganda-chi?</p>'});}
+function stepP(dt){const h=.001;let n=Math.round(dt*pd.sc/h);for(let i=0;i<n&&pd.run;i++){pd.om+=-(G/pd.L)*Math.sin(pd.th)*h;pd.prev=pd.th;pd.th+=pd.om*h;pd.t+=h;
+if(pd.meas&&pd.prev*pd.th<0){pd.cr++;const tc=pd.t-h+h*pd.prev/(pd.prev-pd.th);if(pd.cr==1)pd.tA=tc;if(pd.cr==21){const t10=tc-pd.tA;pd.run=false;rows.push([pd.L,pd.M,pd.A,t10]);
+const tb=$('tb');tb.innerHTML=rows.slice(-8).map(r=>`<tr><td>${r[0].toFixed(1)}</td><td>${r[1].toFixed(1)}</td><td>${r[2]}</td><td>${r[3].toFixed(2)}</td><td><b>${(r[3]/10).toFixed(2)}</b></td></tr>`).join('');
+$('r1').textContent='Natija: 10 ta tebranish '+(t10).toFixed(2)+' s, davr T = '+(t10/10).toFixed(2)+' s. '+(rows.length>=3?'Endi xulosaga oʻtishingiz mumkin.':'Yana tajriba qiling.');}}}}
+function drawP(){const[x,w,h]=fit($('c1'));const px=Math.min(w/2,160),cx=w/2,top=18,len=pd.L/1.5*(h-70),bx=cx+len*Math.sin(pd.th),by=top+len*Math.cos(pd.th);
+x.strokeStyle=css('--ink');x.lineWidth=2;x.beginPath();x.moveTo(cx-40,top);x.lineTo(cx+40,top);x.stroke();
+x.setLineDash([4,4]);x.beginPath();x.moveTo(cx,top);x.lineTo(cx,top+len);x.stroke();x.setLineDash([]);
+x.beginPath();x.moveTo(cx,top);x.lineTo(bx,by);x.stroke();const r=9+7*Math.cbrt(pd.M/2)*1.2;x.fillStyle=css('--ac');x.beginPath();x.arc(bx,by,r,0,2*PI);x.fill();
+x.fillStyle=css('--tx');x.font='14px system-ui';x.fillText('l = '+pd.L.toFixed(1).replace('.',',')+' m, m = '+pd.M.toFixed(1).replace('.',',')+' kg',8,h-8);}
+
+/* ===== 2-MODUL ===== */
+const P=[
+{n:'Tezlik',tx:v=>`Moshina ${v.s} m yoʻlni ${v.t} s da bosib oʻtdi. Tezligi qancha?`,vars:[['s','Yoʻl s','m',60,300,30,180],['t','Vaqt t','s',5,20,5,10]],tg:['Tezlik v','Yoʻl s','Vaqt t'],ti:0,f:['v = s / t','v = s · t','v = t / s'],fi:0,u:['m/s','m','s'],ui:0,calc:v=>v.s/v.t,k:'m'},
+{n:'Birlik',tx:v=>`Moshina ${v.v} km/soat tezlik bilan ${v.t} s yurdi. Necha metr yoʻl bosdi?`,vars:[['v','Tezlik v','km/soat',18,90,18,54],['t','Vaqt t','s',10,40,10,20]],tg:['Tezlik v','Yoʻl s','Vaqt t'],ti:1,f:['s = v / t','s = v · t','s = t / v'],fi:1,u:['m/s','m','km'],ui:1,calc:v=>v.v/3.6*v.t,trap:v=>v.v*v.t,tm:'Tezlikni km/soat dan m/s ga oʻtkazing: 1 km/soat = 1/3,6 m/s. Yoʻl metrda soʻralgan.',k:'m'},
+{n:'Zichlik',tx:v=>`Jismning massasi ${v.m} g, hajmi ${v.V} sm³. Zichligini toping.`,vars:[['m','Massa m','g',100,500,50,300],['V','Hajm V','sm³',50,200,50,100]],tg:['Zichlik ρ','Massa m','Hajm V'],ti:0,f:['ρ = m / V','ρ = m · V','ρ = V / m'],fi:0,u:['g/sm³','g','sm³'],ui:0,calc:v=>v.m/v.V,k:'d'},
+{n:'Massa',tx:v=>`Yogʻochning zichligi ${v.r} kg/m³, hajmi ${v.V} m³. Massasini toping.`,vars:[['r','Zichlik ρ','kg/m³',400,1000,100,800],['V','Hajm V','m³',0.1,1,0.1,0.5]],tg:['Massa m','Zichlik ρ','Hajm V'],ti:0,f:['m = ρ / V','m = ρ · V','m = V / ρ'],fi:1,u:['kg','kg/m³','m³'],ui:0,calc:v=>v.r*v.V,trap:v=>v.r/v.V,tm:'Massa zichlik va hajmning koʻpaytmasiga teng: m = ρ · V.',k:'d'}];
+let P2i=0,V2={},st2=0,an={p:0,run:false};
+$('pn').innerHTML=P.map((p,i)=>`<button data-p="${i}">${i+1}. ${p.n}</button>`).join('');
+$('pn').onclick=e=>{const b=e.target.closest('[data-p]');if(b)loadP(+b.dataset.p)};
+const fmt=n=>(+n.toFixed(2)).toString().replace('.',',');
+function loadP(i){P2i=i;const p=P[i];[...$('pn').children].forEach((b,k)=>b.classList.toggle('on',k==i));
+p.vars.forEach(v=>{if(!(v[0] in V2)||V2.__p!=i)V2[v[0]]=v[6]});V2.__p=i;
+$('t2').textContent=`${i+1}-masala. ${p.n}`;
+$('sl2').innerHTML=p.vars.map(v=>`<label>${v[1]}: <b id="s2o_${v[0]}">${fmt(V2[v[0]])}</b> ${v[2]}<input type="range" data-k="${v[0]}" min="${v[3]}" max="${v[4]}" step="${v[5]}" value="${V2[v[0]]}"></label>`).join('');
+$('sl2').oninput=e=>{const k=e.target.dataset.k;if(!k)return;V2[k]=+(+e.target.value).toFixed(2);$('s2o_'+k).textContent=fmt(V2[k]);resetSteps()};
+resetSteps();}
+function resetSteps(){st2=0;an.p=0;an.run=false;$('fb').textContent='';$('r2').textContent='Ishga tushiring va natijani kuzating.';$('q2').textContent=P[P2i].tx(V2).replace(/\d+\.\d+/g,m=>m.replace('.',','));renderSteps();}
+const SN=['Berilgan','Topish kerak','Formula','Hisoblash','Javob va birlik'];
+function renderSteps(){const p=P[P2i];let h='';
+SN.forEach((n,i)=>{const c=i<st2?'':i==st2?' cur':' fu';let b='';
+if(i<st2)b='<span class="ok">✓ '+['Qiymatlar toʻgʻri',p.tg[p.ti],p.f[p.fi],fmt(p.calc(V2)),p.u[p.ui]][i]+'</span>';
+else if(i==st2){if(i==0)b=p.vars.map(v=>`${v[1].split(' ')[1]} = <input type="number" step="any" inputmode="decimal" id="g_${v[0]}"> ${v[2]}`).join('<br>')+'<div class="row"><button class="p" id="ck">Tekshirish</button></div>';
+else if(i==3)b=`<input type="number" step="any" inputmode="decimal" id="calc"> <div class="row"><button class="p" id="ck">Tekshirish</button></div>`;
+else b=(i==1?p.tg:i==2?p.f:p.u).map((t,j)=>`<button class="ch" data-o="${j}">${t}</button>`).join('');}
+h+=`<div class="st${c}"><b>${i+1}. ${n}</b><br>${b}</div>`});
+if(st2>4)h+='<p class="ok">Masala yechildi! Slayderni oʻzgartirib, javob qanday oʻzgarishini kuzating.</p>';
+$('stp').innerHTML=h;}
+$('stp').onclick=e=>{const p=P[P2i],fb=$('fb');const o=e.target.closest('[data-o]');
+const ok=m=>{fb.className='ok';fb.textContent=m;st2++;renderSteps()},no=m=>{fb.className='bad';fb.textContent=m};
+if(o){const j=+o.dataset.o;if(st2==1)j==p.ti?ok('Toʻgʻri!'):no('Savolga qayta qarang: nimani topish soʻralgan?');
+else if(st2==2)j==p.fi?ok('Toʻgʻri formula!'):no('Formula mos emas. Kattaliklarning bogʻlanishini eslang.');
+else if(st2==4)j==p.ui?ok('Ajoyib! Javob: '+fmt(p.calc(V2))+' '+p.u[p.ui]):no('Birlik mos emas. Topilgan kattalik qanday oʻlchanadi?');return}
+if(e.target.id=='ck'){if(st2==0){const bad=p.vars.filter(v=>Math.abs(parseFloat(($('g_'+v[0]).value||'').replace(',','.'))-V2[v[0]])>1e-6);bad.length?no('Tekshiring: '+bad.map(v=>v[1]).join(', ')+' qiymati notoʻgʻri.'):ok('Toʻgʻri!')}
+else{const a=parseFloat(($('calc').value||'').replace(',','.')),c=p.calc(V2);if(isNaN(a))return no('Javobni raqam bilan yozing.');
+if(Math.abs(a-c)<=Math.max(.02,Math.abs(c)*.01))ok('Hisob toʻgʻri: '+fmt(c));else if(p.trap&&Math.abs(a-p.trap(V2))<=Math.abs(p.trap(V2))*.01+.02)no('Maslahat: '+p.tm);else no('Hisobda xato bor. Qiymatlarni formulaga qayta qoʻying.');}}};
+$('b2').onclick=()=>{an.p=0;an.run=true};
+function draw2(){const[x,w,h]=fit($('c2')),p=P[P2i];const pr=an.p;x.font='14px system-ui';x.fillStyle=css('--tx');
+if(p.k=='m'){const v=P2i==1?V2.v/3.6:V2.s/V2.t,s=P2i==1?v*V2.t:V2.s,t=V2.t;x.fillStyle=css('--bd');x.fillRect(0,h-50,w,6);x.fillStyle=css('--tx');
+const cw=60,X=10+(w-cw-20)*pr;x.fillStyle=css('--ac');x.fillRect(X,h-82,cw,24);x.fillRect(X+14,h-100,30,18);x.fillStyle=css('--ink');[14,44].forEach(d=>{x.beginPath();x.arc(X+d,h-56,8,0,2*PI);x.fill()});
+x.fillStyle=css('--tx');x.fillText('t = '+fmt(t*pr)+' s,  yoʻl = '+fmt(s*pr)+' m',10,22);x.fillText('v = '+fmt(v)+' m/s',10,44);
+if(!an.run&&pr>=1)$('r2').textContent=`Moshina har sekundda ${fmt(v)} m yoʻl bosadi. Tezlik oshsa, bir xil vaqtda koʻproq yoʻl bosadi.`;}
+else{const V=P2i==2?V2.V:V2.V*100,m=P2i==2?V2.m:V2.r*V2.V,sd=30+80*Math.cbrt(V/(P2i==2?200:100));x.fillStyle=css('--ac');x.globalAlpha=.25+.75*pr;
+x.fillRect(w/2-sd/2,h-30-sd,sd,sd);x.globalAlpha=1;x.strokeStyle=css('--ink');x.lineWidth=2;x.strokeRect(w/2-sd/2,h-30-sd,sd,sd);
+x.fillStyle=css('--tx');x.fillText('m = '+fmt(m*pr)+(P2i==2?' g':' kg'),10,22);x.fillText('V = '+fmt((P2i==2?V2.V:V2.V)*pr)+(P2i==2?' sm³':' m³'),10,44);x.fillRect(0,h-30,w,3);
+if(!an.run&&pr>=1)$('r2').textContent=`Hajm bir xil boʻlganda massa katta boʻlsa, zichlik ham katta boʻladi (ρ = m / V).`;}}
+
+/* ===== 3-MODUL ===== */
+const MT=[['Yogʻoch',600,'#b98a55'],['Tosh',2500,'#8a8f98'],['Temir',7800,'#6b7a8f'],['Muz',920,'#bfe6f5']];let mi=0,bl={y:-1,run:false};
+$('mt').innerHTML=MT.map((m,i)=>`<button data-m="${i}" class="${i?'':'on'}">${m[0]}</button>`).join('');
+$('mt').onclick=e=>{const b=e.target.closest('[data-m]');if(!b)return;mi=+b.dataset.m;[...$('mt').children].forEach((c,k)=>c.classList.toggle('on',k==mi));m3reset()};
+function m3reset(){bl.run=false;bl.y=-1;$('r3').textContent='';}
+$('b3').onclick=()=>{bl.y=0;bl.run=true};
+function side(h){return 28+70*Math.cbrt(+$('V').value/1000)}
+function target(h){const m=MT[mi],s=side(h),wy=h*.4,f=Math.min(1,m[1]/1000);return m[1]<1000?wy-s*(1-m[1]/1000):h-14-s}
+function draw3(){const[x,w,h]=fit($('c3')),m=MT[mi],s=side(h),wy=h*.4;x.fillStyle=css('--wt');x.globalAlpha=.6;x.fillRect(w/2-110,wy,220,h-14-wy);x.globalAlpha=1;
+x.strokeStyle=css('--ink');x.lineWidth=3;x.beginPath();x.moveTo(w/2-110,20);x.lineTo(w/2-110,h-14);x.lineTo(w/2+110,h-14);x.lineTo(w/2+110,20);x.stroke();
+const y0=bl.y<0?8:bl.y;if(bl.run){const t=target(h);bl.y+=(t-bl.y)*.06*(m[1]<1000?1:1.3);if(Math.abs(t-bl.y)<.5){bl.y=t;bl.run=false;const V=+$('V').value,mass=m[1]*V/1e6;
+$('r3').innerHTML=m[1]<1000?`<b>${m[0]} suzadi:</b> zichligi (${m[1]} kg/m³) suvnikidan (1000 kg/m³) kichik. Massasi ${fmt(mass)} kg. Hajmning ${Math.round(m[1]/10)}% qismi suvda.`:`<b>${m[0]} choʻkadi:</b> zichligi (${m[1]} kg/m³) suvnikidan (1000 kg/m³) katta. Massasi ${fmt(mass)} kg.`;}}
+x.fillStyle=m[2];x.fillRect(w/2-s/2,y0,s,s);x.strokeRect(w/2-s/2,y0,s,s);x.fillStyle=css('--tx');x.font='14px system-ui';x.fillText('ρ jism = '+m[1]+' kg/m³',8,20);x.fillText('ρ suv = 1000 kg/m³',8,40);}
+const QZ=[['Jism zichligi suvnikidan kichik boʻlsa, u:',['suvda choʻkadi','suvda suzadi','havoga koʻtariladi'],1,'Zichlik suvnikidan kichik jism suzadi.'],
+['m = 200 g, V = 100 sm³ boʻlsa, zichlik qancha?',['0,5 g/sm³','2 g/sm³','20 g/sm³'],1,'ρ = m / V = 200 / 100 = 2 g/sm³.'],
+['36 km/soat necha m/s?',['10 m/s','36 m/s','129,6 m/s'],0,'36 : 3,6 = 10 m/s.'],
+['Mayatnik davri nimaga bogʻliq?',['yuk massasiga','ip uzunligiga','yukning rangiga'],1,'Davr ip uzunligiga bogʻliq, massaga emas.'],
+['Ilmiy bilish tartibi qaysi?',['xulosa → tajriba → kuzatish','kuzatish → tajriba → xulosa','tajriba → xulosa → kuzatish'],1,'Avval kuzatamiz, soʻng tajriba qilamiz, oxirida xulosa chiqaramiz.']];
+let ans=[];
+$('qz').innerHTML=QZ.map((q,i)=>`<div class="st"><b>${i+1}. ${q[0]}</b>`+q[1].map((o,j)=>`<button class="ch" data-qi="${i}" data-qj="${j}">${o}</button>`).join('')+'</div>').join('');
+$('qz').onclick=e=>{const b=e.target.closest('[data-qi]');if(!b)return;ans[+b.dataset.qi]=+b.dataset.qj;document.querySelectorAll(`[data-qi="${b.dataset.qi}"]`).forEach(c=>c.classList.toggle('on',c==b))};
+$('bq').onclick=()=>{if(ans.filter(a=>a!==undefined).length<5){$('qr').innerHTML='<p class="bad">Hamma savolga javob bering.</p>';return}
+let sc=0,er='';QZ.forEach((q,i)=>{if(ans[i]==q[2])sc++;else er+=`<p class="bad">${i+1}-savol: toʻgʻri javob — “${q[1][q[2]]}”. <span class="mu">${q[3]}</span></p>`});
+$('qr').innerHTML=`<h2>Natija: ${sc} / 5</h2>${er||'<p class="ok">Hammasi toʻgʻri! Barakalla!</p>'}<button class="p" data-go="4">Umumiy xulosa</button>`};
+
+/* ===== Umumiy sikl ===== */
+let last=performance.now();
+function loop(n){const dt=Math.min(.05,(n-last)/1000);last=n;
+if(view==1){if(pd.run)stepP(dt);drawP()}
+if(view==2){if(an.run){an.p=Math.min(1,an.p+dt/4);if(an.p>=1)an.run=false}draw2()}
+if(view==3)draw3();requestAnimationFrame(loop)}
+go(0);requestAnimationFrame(loop);
+</script></body></html>
