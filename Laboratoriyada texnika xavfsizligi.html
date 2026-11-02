@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="uz"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Laboratoriyada texnika xavfsizligi</title>
+<style>
+:root{--bg:#f4f1ea;--card:#fffdf8;--tx:#1f2a37;--mu:#4b5866;--ac:#2f6f8f;--act:#fff;--ok:#2e7d4f;--bad:#b3402f;--bd:#d9d2c3;--cv:#eaf3f7;--fl:#d8cdb4;--tb:#b98a55;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161b22;--card:#1f2630;--tx:#e8edf2;--mu:#b4c0cc;--ac:#7fc3e3;--act:#10202a;--ok:#7fd19a;--bad:#f0907f;--bd:#364250;--cv:#18222c;--fl:#2b3440;--tb:#7a5c38;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#161b22;--card:#1f2630;--tx:#e8edf2;--mu:#b4c0cc;--ac:#7fc3e3;--act:#10202a;--ok:#7fd19a;--bad:#f0907f;--bd:#364250;--cv:#18222c;--fl:#2b3440;--tb:#7a5c38;color-scheme:dark}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:17px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+#bar{position:sticky;top:0;z-index:5;background:var(--bg);display:flex;gap:6px;padding:8px;border-bottom:1px solid var(--bd)}
+#bar button{flex:1;min-height:44px;padding:4px}
+main{max-width:760px;margin:0 auto;padding:12px}
+h1{font-size:1.5rem;margin:.3em 0}h2{font-size:1.2rem;margin:.2em 0 .4em}p{margin:.4em 0}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px;margin:10px 0}
+button{font:inherit;min-height:48px;padding:8px 14px;border-radius:12px;border:2px solid var(--ac);background:var(--card);color:var(--tx);cursor:pointer}
+button.p,button.on{background:var(--ac);color:var(--act);font-weight:600}
+button:disabled{opacity:.55}
+.mod{display:block;width:100%;text-align:left;margin:8px 0;padding:14px}
+canvas{width:100%;display:block;background:var(--cv);border-radius:12px;border:1px solid var(--bd);touch-action:manipulation}
+input[type=text]{font:inherit;width:100%;min-height:46px;padding:4px 10px;margin:4px 0;border-radius:10px;border:2px solid var(--bd);background:var(--card);color:var(--tx)}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}.ch{display:block;width:100%;text-align:left;margin:6px 0}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}.two button{text-align:left}
+.ok{color:var(--ok);font-weight:600}.bad{color:var(--bad);font-weight:600}.mu{color:var(--mu)}.hide{display:none}
+.st{padding:8px;border-radius:10px;border:1px dashed var(--bd);margin:8px 0}
+</style></head><body>
+<div id="bar" class="hide"></div>
+<main id="st"></main>
+<script>
+const $=i=>document.getElementById(i),css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const SUM=`<div class="card"><h2>Umumiy xulosa</h2><p>1. Laboratoriyada faqat oʻqituvchi ruxsati bilan, yugurmasdan va toza, quruq ish joyida ishlaymiz.</p><p>2. Elektr va qizdirish asboblarini hoʻl qoʻl bilan ushlamaymiz, ulashdan oldin manbani uzamiz, qizigan idishni qisqich bilan olamiz.</p><p>3. Shisha sinsa yoki yongʻin chiqsa, shoshilmay, avval oʻqituvchiga xabar beramiz va tartib bilan chiqamiz.</p></div>`;
+const LAB=[['🏃',.14,.38,1,'Yugurish mumkin emas: toʻqnashuv va jarohat xavfi bor.'],['🧪',.9,.52,1,'Idish stol chetida: tushib sinadi. Uni stol markaziga qoʻying.'],['💧',.45,.76,1,'Hoʻl joy: sirpanish va elektr xavfi. Quruq arting.'],['🍎',.62,.47,1,'Laboratoriyada ovqatlanish mumkin emas.'],['🎒',.28,.82,1,'Sumka yoʻlakda: qoqilish xavfi. Belgilangan joyga qoʻying.'],['🔧',.76,.47,1,'Asbob tartibsiz tashlangan: ishdan keyin joyiga qoʻyiladi.'],['🔬',.5,.47,0,'Bu xato emas: asbob joyida turibdi.'],['⚖️',.2,.47,0,'Bu xato emas: tarozi toʻgʻri qoʻyilgan.']];
+const MAP1=[['🚪',.08,.5,1,'Chiqish eshigi: favqulodda holatda shu yerdan chiqiladi.'],['🧯',.88,.25,1,'Yongʻin oʻchirgich: uni faqat oʻqituvchi ishlatadi.'],['⛑️',.88,.75,1,'Birinchi yordam qutisi: jarohatda oʻqituvchi shundan foydalanadi.'],['🪑',.5,.5,0,'Bu stol-stul, qidirilayotgan narsa emas.']];
+const MAP2=[['🚪',.08,.5,1,'Chiqish eshigi: yoʻl shu yerdan boshlanadi.'],['🪜',.4,.2,1,'Zinapoya: yongʻinda shu yoʻldan tushiladi.'],['🌳',.9,.5,1,'Yigʻilish joyi: binodan uzoqroq ochiq joy, oʻqituvchi sanoq oʻtkazadi.'],['🛗',.55,.8,0,'Xato: yongʻin paytida liftdan foydalanilmaydi.']];
+const Q=[
+[['Laboratoriyaga qanday kiriladi?',['Ruxsatsiz','Oʻqituvchi ruxsati bilan','Yugurib'],1,'Faqat oʻqituvchi ruxsati bilan kiriladi.'],['Ish joyi qanday boʻlishi kerak?',['Toza va quruq','Ho‘l','Tartibsiz'],0,'Toza va quruq joyda sirpanish va tok xavfi kam.'],['Ishdan keyin asboblar nima qilinadi?',['Stolda qoladi','Joyiga qoʻyiladi','Sumkaga solinadi'],1,'Asboblar joyiga qoʻyiladi.'],['Laboratoriyada ovqatlanish mumkinmi?',['Ha','Yoʻq','Ba’zan'],1,'Yoʻq: ovqatga kimyoviy va shisha zarrachalar tushishi mumkin.'],['Sumka qayerga qoʻyiladi?',['Yoʻlakka','Belgilangan joyga','Stol ustiga'],1,'Yoʻlakdagi sumkaga qoqilish mumkin.']],
+[['Hoʻl qoʻl bilan rozetkaga tegish:',['Xavfsiz','Juda xavfli','Faqat bir marta mumkin'],1,'Suv tokni oʻtkazadi, tok urishi mumkin.'],['Sim shikastlangan boʻlsa:',['Ishlataman','Oʻqituvchiga aytaman','Ustidan lenta yopaman'],1,'Shikastlangan simni ishlatib boʻlmaydi.'],['Zanjirni ulashdan oldin manba:',['Yoqiq boʻladi','Uzilgan boʻladi','Farqi yoʻq'],1,'Manba uzilgan holda ulanadi.'],['Qizigan idish nima bilan olinadi?',['Qoʻl bilan','Qisqich bilan','Ro‘mol bilan'],1,'Kuyishning oldini olish uchun qisqich ishlatiladi.'],['Spirtovka qanday oʻchiriladi?',['Puflab','Qalpoq bilan yopib','Suv sepib'],1,'Spirtovka qalpoq bilan yopib oʻchiriladi.']],
+[['Menzurka sindi. Birinchi harakat:',['Oʻzim terib olaman','Oʻqituvchiga aytaman','Hech narsa'],1,'Avval oʻqituvchiga xabar beriladi.'],['Siniq boʻlaklar qanday olinadi?',['Qoʻl bilan','Oʻqituvchi koʻrsatmasi bilan','Oyoq bilan'],1,'Qoʻl bilan olish jarohatga olib keladi.'],['Yongʻin chiqsa:',['Yugurib qochaman','Xabar berib, tartib bilan chiqaman','Yashirinaman'],1,'Shoshilmay, tartib bilan chiqiladi.'],['Simdan uchqun chiqsa:',['Ushlayman','Manbani oʻchirib, oʻqituvchiga aytaman','Suv sepaman'],1,'Suv sepish xavfli: avval manba oʻchiriladi.'],['Yongʻin paytida lift:',['Foydalanaman','Foydalanmayman','Faqat ikkinchi qavatda'],1,'Zinapoyadan tushiladi.']]];
+const MT=[[["Oʻqituvchi ruxsati","Asbob xavfsiz ishlatiladi"],["Joyni quruq tutish","Sirpanish va tok xavfi kamayadi"],["Yugurmaslik","Toʻqnashuv va sinish oldi olinadi"],["Asboblarni joyiga qoʻyish","Keyingi ishchilar xavfsiz ishlaydi"]],[["Hoʻl qoʻl bilan tegmaslik","Suv tokni oʻtkazadi"],["Shikastlangan sim","Tok urishi va tutashuv xavfi"],["Avval manbani uzish","Ulashda tok urmasligi uchun"],["Qizigan idishni qisqich bilan olish","Kuyishning oldi olinadi"]]];
+const ORD=[["Shisha sindi",["Qimirlamay, oʻqituvchiga ayting","Boshqalarni siniqdan uzoqlashtiring","Oʻqituvchi bilan siniqni yigʻishtiring"]],["Suv toʻkildi",["Elektr asboblarini uzing","Oʻqituvchiga xabar bering","Suvni quruq latta bilan arting"]],["Simdan uchqun chiqdi",["Manbani oʻchiring","Simga tegmay, oʻqituvchiga ayting","Asbobni tekshirtirmay ishlatmang"]],["Yongʻin chiqdi",["Oʻqituvchiga xabar bering","Tartib bilan chiqishga yuring","Yigʻilish joyida sanoqdan oʻting"]]];
+const M=[{n:'1-reja. Umumiy qoidalar',d:'Yugurmaslik, tozalik, tartib',s:[
+{t:'Savol',tx:'Laboratoriyada nega yugurish mumkin emas? Ishga tushirib koʻring.',k:'anim',d:'run',r:['Yugurganda stolga urilib, asbob tushib sinadi. Laboratoriyada faqat yurib harakat qiling.'],g:[0]},
+{t:'Tushuntirish',tx:'Qoidani uning sababi bilan juftlang: avval chapdan, keyin oʻngdan tanlang.',k:'match',m:0},
+{t:'Amaliy ish: Xatoni top',tx:'Rasmda 6 ta qoidabuzarlik bor. Ularni bosib toping.',k:'find',o:LAB,bg:'lab',nt:6},
+{t:'Mustahkamlash',tx:'5 savolli test.',k:'quiz',q:0},
+{t:'Uy vazifasi',tx:'Oʻzingiz uchun 3 ta qoidani yozing.',k:'list',ph:'Masalan: Yugurmayman'}]},
+{n:'2-reja. Elektr va qizdirish asboblari',d:'Tok, zanjir, spirtovka',s:[
+{t:'Savol',tx:'Hoʻl qoʻl bilan rozetkaga tegish nega xavfli? Variantni tanlab, ishga tushiring (haqiqatda sinab koʻrmang!).',k:'anim',d:'hand',v:['Quruq qoʻl','Hoʻl qoʻl'],r:['Quruq qoʻl xavfsizroq, lekin ruxsatsiz tegmang.','Ogohlantirish: suv tokni yaxshi oʻtkazadi, hoʻl qoʻlda tok urishi xavfi juda katta!'],g:[1,0]},
+{t:'Tushuntirish',tx:'Qoidani uning sababi bilan juftlang.',k:'match',m:1},
+{t:'Amaliy ish: virtual stol',tx:'Zanjirni yigʻing. Qoida: avval manbani uzing, soʻng ulang.',k:'circ'},
+{t:'Mustahkamlash',tx:'5 savolli test.',k:'quiz',q:1},
+{t:'Uy vazifasi',tx:'Uydagi elektr asboblari uchun 3 ta qoida yozing.',k:'list',ph:'Masalan: Hoʻl qoʻl bilan ushlamayman'}]},
+{n:'3-reja. Shisha idish va favqulodda holat',d:'Sinish, yongʻin, chiqish',s:[
+{t:'Savol',tx:'Menzurka sinsa nima qilamiz? Harakatni tanlab, ishga tushiring.',k:'anim',d:'break',v:['Oʻzim terib olaman','Oʻqituvchiga aytaman','Oyoq bilan itaraman'],r:['Xato: siniq shisha qoʻlni kesadi.','Toʻgʻri! Avval oʻqituvchiga xabar beriladi.','Xato: shisha tarqalib, jarohat xavfi oshadi.'],g:[0,1,0]},
+{t:'Tushuntirish: xona xaritasi',tx:'Xaritadan 3 ta narsani toping: chiqish eshigi, oʻchirgich, birinchi yordam qutisi.',k:'find',o:MAP1,bg:'map',nt:3},
+{t:'Amaliy ish: stsenariylar',tx:'4 ta holatda harakatlarni toʻgʻri tartibda bosing.',k:'order'},
+{t:'Mustahkamlash',tx:'5 savolli test.',k:'quiz',q:2},
+{t:'Uy vazifasi: chiqish yoʻli',tx:'Xaritada evakuatsiya yoʻlidagi 3 belgini toping: eshik, zinapoya, yigʻilish joyi.',k:'find',o:MAP2,bg:'map',nt:3}]}];
+let mi=-1,si=0,ST={},S=null,cv=null;
+function home(){mi=-1;$('bar').classList.add('hide');S=null;cv=null;$('st').innerHTML=`<h1>Laboratoriyada texnika xavfsizligi</h1><p>Laboratoriya — qiziqarli joy, lekin qoidalarga amal qilish kerak. 3 ta reja, har birida 5 bosqich. Rejani tanlang:</p>`+M.map((m,i)=>`<button class="card mod" data-a="o" data-m="${i}"><b>${m.n}</b><br><span class="mu">${m.d}</span></button>`).join('')+SUM;scrollTo(0,0)}
+function open_(m,s){mi=m;si=s;ST={};R()}
+function R(){const g=M[mi].s[si],b=$('bar');b.classList.remove('hide');b.innerHTML='<button data-a="h">⌂</button>'+[0,1,2,3,4].map(i=>`<button data-a="o" data-m="${mi}" data-s="${i}" class="${i==si?'on':''}">${i+1}</button>`).join('');
+let h=`<div class="card"><h2>${si+1}. ${g.t}</h2><p>${g.tx}</p>`,k=g.k;S=null;
+if(k=='anim'){ST.v=g.v?-1:0;if(g.v)h+='<div class="row">'+g.v.map((t,i)=>`<button data-a="v" data-i="${i}">${t}</button>`).join('')+'</div>';h+='<canvas id="cv" height="220"></canvas><div class="row"><button class="p" data-a="run">Ishga tushirish</button></div><p id="rs"></p>';S={d:g.d,p:0,run:false}}
+if(k=='find'){ST.f=[];h+=`<canvas id="cv" height="260"></canvas><p id="rs" class="mu">Topildi: 0 / ${g.nt}</p>`;S={bg:g.bg}}
+if(k=='match'){const P=MT[g.m];ST.sel=-1;ST.dn=[];h+='<div class="two"><div>'+P.map((p,i)=>`<button class="ch" data-a="l" data-i="${i}">${p[0]}</button>`).join('')+'</div><div>'+[2,0,3,1].map(i=>`<button class="ch" data-a="r" data-i="${i}">${P[i][1]}</button>`).join('')+'</div></div><p id="rs"></p>'}
+if(k=='quiz'){ST.a=[];h+=Q[g.q].map((q,i)=>`<div class="st"><b>${i+1}. ${q[0]}</b>`+q[1].map((o,j)=>`<button class="ch" data-a="q" data-i="${i}" data-j="${j}">${o}</button>`).join('')+'</div>').join('')+'<div class="row"><button class="p" data-a="qc">Tekshirish</button></div><div id="rs"></div>'}
+if(k=='list'){h+=[1,2,3].map(i=>`<input type="text" id="li${i}" placeholder="${i}. ${g.ph}">`).join('')+'<div class="row"><button class="p" data-a="lc">Roʻyxat qilish</button></div><div id="rs"></div>'}
+if(k=='order'){ST.o=0;ST.n=0;h+='<div id="od"></div>'}
+if(k=='circ'){ST.c={src:1,con:0,sw:0,ok:0};h+='<canvas id="cv" height="200"></canvas><div class="row" id="cb"></div><p id="rs"></p><div id="hx"></div>';S={circ:1}}
+h+='</div><div class="row"><button data-a="pv" '+(si?'':'disabled')+'>← Oldingi</button><button class="p" data-a="nx">'+(si<4?'Keyingi →':'Yakunlash')+'</button></div>'+(si==4?SUM:'');
+$('st').innerHTML=h;cv=$('cv');if(cv&&S.bg)cv.onclick=ev=>clk(ev);if(k=='order')ordR();if(k=='circ')circR();scrollTo(0,0)}
+$('bar').onclick=$('st').onclick=e=>{const b=e.target.closest('[data-a]');if(!b||b.disabled)return;const a=b.dataset.a,i=+b.dataset.i,g=mi>=0?M[mi].s[si]:null,rs=$('rs');
+if(a=='o')open_(+b.dataset.m,+(b.dataset.s||0));else if(a=='h')home();else if(a=='nx')si<4?open_(mi,si+1):home();else if(a=='pv')open_(mi,si-1);
+else if(a=='v'){ST.v=i;[...b.parentNode.children].forEach((c,k)=>c.classList.toggle('on',k==i));S.p=0;S.run=false;rs.textContent=''}
+else if(a=='run'){if(ST.v<0){rs.innerHTML='<span class="bad">Avval variantni tanlang.</span>';return}S.p=0;S.run=true;S.v=ST.v;rs.textContent=''}
+else if(a=='l'){ST.sel=i;document.querySelectorAll('[data-a=l]').forEach(c=>c.classList.toggle('on',+c.dataset.i==i))}
+else if(a=='r'){if(ST.sel<0){rs.innerHTML='<span class="bad">Avval chapdan qoidani tanlang.</span>';return}
+if(i==ST.sel){ST.dn.push(i);document.querySelectorAll(`[data-i="${i}"][data-a=l],[data-i="${i}"][data-a=r]`).forEach(c=>{c.disabled=true;c.classList.remove('on')});ST.sel=-1;rs.innerHTML=ST.dn.length==4?'<span class="ok">Barakalla! Hammasi juftlandi.</span>':'<span class="ok">Toʻgʻri juft!</span>'}else rs.innerHTML='<span class="bad">Mos emas. Sababini qayta oʻylab koʻring.</span>'}
+else if(a=='q'){ST.a[i]=+b.dataset.j;document.querySelectorAll(`[data-a=q][data-i="${i}"]`).forEach(c=>c.classList.toggle('on',c==b))}
+else if(a=='qc'){const Z=Q[g.q];if(ST.a.filter(x=>x!==undefined).length<5){rs.innerHTML='<p class="bad">Hamma savolga javob bering.</p>';return}let s=0,er='';Z.forEach((q,i)=>{if(ST.a[i]==q[2])s++;else er+=`<p class="bad">${i+1}-savol: toʻgʻri javob — “${q[1][q[2]]}”. <span class="mu">${q[3]}</span></p>`});rs.innerHTML=`<h2>Natija: ${s} / 5</h2>`+(er||'<p class="ok">Hammasi toʻgʻri!</p>')}
+else if(a=='lc'){const v=[1,2,3].map(n=>$('li'+n).value.trim()).filter(Boolean);rs.innerHTML=v.length<3?'<p class="bad">3 ta qoidani yozing.</p>':'<p class="ok">Sizning qoidalaringiz:</p><ol>'+v.map(t=>`<li>${t.replace(/</g,'&lt;')}</li>`).join('')+'</ol>'}
+else if(a=='od')odTap(b.dataset.t);else if(a=='cs')circ(b.dataset.c);};
+/* find */
+function clk(ev){const g=M[mi].s[si],r=cv.getBoundingClientRect(),X=ev.clientX-r.left,Y=ev.clientY-r.top;let hit=-1,dm=34;g.o.forEach((o,i)=>{const d=Math.hypot(X-o[1]*r.width,Y-o[2]*r.height);if(d<dm){dm=d;hit=i}});if(hit<0)return;const o=g.o[hit],rs=$('rs');
+if(o[3]){if(!ST.f.includes(hit))ST.f.push(hit);rs.innerHTML=`<span class="ok">Toʻgʻri! ${o[4]}</span><br><span class="mu">Topildi: ${ST.f.length} / ${g.nt}</span>`+(ST.f.length==g.nt?'<br><span class="ok">Barakalla, hammasini topdingiz!</span>':'')}else rs.innerHTML=`<span class="bad">${o[4]}</span><br><span class="mu">Topildi: ${ST.f.length} / ${g.nt}</span>`}
+/* order */
+function ordR(){const[t,st]=ORD[ST.o];const sh=[...st.keys()].sort((a,b)=>((a*2+ST.o)%3)-((b*2+ST.o)%3));
+$('od').innerHTML=`<p><b>${ST.o+1}/4. ${t}.</b> Toʻgʻri tartibda bosing:</p>`+st.slice(0,ST.n).map((s,i)=>`<p class="ok">${i+1}. ${s}</p>`).join('')+sh.filter(i=>i>=0&&!(st.slice(0,ST.n).includes(st[i]))).map(i=>`<button class="ch" data-a="od" data-t="${st[i]}">${st[i]}</button>`).join('')+'<p id="om"></p>'}
+function odTap(t){const st=ORD[ST.o][1];if(t==st[ST.n]){ST.n++;if(ST.n==3){ST.o++;ST.n=0;if(ST.o==4){$('od').innerHTML='<p class="ok">Barakalla! 4 ta holatning hammasini toʻgʻri hal qildingiz.</p>';return}$('od').innerHTML='<p class="ok">Toʻgʻri! Keyingi holat.</p><button class="p" data-a="on">Davom etish</button>';$('od').querySelector('button').onclick=ordR;return}ordR()}else $('om').innerHTML='<span class="bad">Tartib xato. Maslahat: avval oʻzingiz va boshqalar xavfsizligini, keyin oqibatni bartaraf etishni oʻylang.</span>'}
+/* circ */
+function circR(){const c=ST.c;$('cb').innerHTML=`<button data-a="cs" data-c="s">Manba: ${c.src?'yoqiq':'oʻchiq'}</button><button data-a="cs" data-c="c">${c.con?'Lampochka ulangan':'Lampochkani ulash'}</button><button data-a="cs" data-c="w">Kalit: ${c.sw?'yopiq':'ochiq'}</button>`}
+function circ(k){const c=ST.c,rs=$('rs');
+if(k=='s'){c.src=!c.src;rs.innerHTML=c.src?'Manba yoqildi.':'Manba uzildi.'}
+if(k=='c'){if(c.con){rs.innerHTML='Lampochka allaqachon ulangan.'}else if(c.src)rs.innerHTML='<span class="bad">Ogohlantirish! Manba yoqiq holda ulab boʻlmaydi. Avval manbani uzing, soʻng ulang.</span>';else{c.con=1;rs.innerHTML='<span class="ok">Toʻgʻri! Lampochka ulandi.</span>'}}
+if(k=='w'){c.sw=!c.sw;rs.textContent=c.sw?'Kalit yopildi.':'Kalit ochildi.'}
+circR();if(c.src&&c.con&&c.sw&&!c.ok){c.ok=1;rs.innerHTML='<span class="ok">Zanjir toʻgʻri yigʻildi, lampochka yondi!</span>';$('hx').innerHTML='<p>Endi qizdirish: spirtovkada suvni qizdiring.</p><button class="p" id="hb">Spirtovkani yoqish</button>';$('hb').onclick=()=>{$('hx').innerHTML='<p>Suv qizidi, idish issiq. Uni qanday olasiz?</p><button class="ch" id="h1">Qisqich bilan</button><button class="ch" id="h2">Qoʻl bilan</button><p id="hm"></p>';$('h1').onclick=()=>$('hm').innerHTML='<span class="ok">Toʻgʻri! Qizigan idish qisqich bilan olinadi. Spirtovkani qalpoq bilan yopib oʻchiring.</span>';$('h2').onclick=()=>$('hm').innerHTML='<span class="bad">Xato! Qizigan idish qoʻlni kuydiradi. Qisqich ishlating.</span>'}}}
+/* chizish */
+function fit(){const w=cv.clientWidth,d=devicePixelRatio||1,h=+cv.getAttribute('height');cv.width=w*d;cv.height=h*d;const x=cv.getContext('2d');x.setTransform(d,0,0,d,0,0);return[x,w,h]}
+const em=(x,e,X,Y,s)=>{x.font=(s||32)+'px serif';x.textAlign='center';x.textBaseline='middle';x.fillText(e,X,Y)};
+function frame(){if(cv&&S&&document.body.contains(cv)){const g=M[mi].s[si],[x,w,h]=fit();x.fillStyle=css('--fl');x.fillRect(0,h*.62,w,h*.38);x.fillStyle=css('--tx');
+if(S.d){if(S.run){S.p=Math.min(1,S.p+.012);if(S.p>=1){S.run=false;const v=S.v||0,r=$('rs');if(r)r.innerHTML=`<span class="${g.g[v]?'ok':'bad'}">${g.r[v]||g.r[0]}</span>`}}
+const p=S.p;x.fillStyle=css('--tb');x.fillRect(w*.1,h*.66,w*.8,14);x.fillStyle=css('--tx');
+if(S.d=='run'){em(x,'🏃',w*.08+w*.7*Math.min(p/.6,1),h*.5);const f=p>.6?(p-.6)/.4:0;em(x,f>.9?'💥':'🧪',w*.82,h*.55+f*h*.28);}
+if(S.d=='hand'){em(x,'🔌',w*.72,h*.45,42);const q=Math.min(p/.8,1);em(x,'✋',w*.15+w*.5*q,h*.45);if(S.v==1&&q>.2)em(x,'💧',w*.15+w*.5*q,h*.45+22,18);if(p>.85)S.v==1?em(x,'⚡',w*.68,h*.3,42):0;if(p>.85)x.fillText(S.v==1?'Tok urishi xavfi!':'Ruxsatsiz tegmang!',w*.4,h*.15)}
+if(S.d=='break'){const f=p<.4?0:Math.min((p-.4)/.3,1);em(x,p>.7?'💥':'🧪',w*.5+f*20,h*.6+f*h*.22,p>.7?40:32);if(p>.7){em(x,'🔸',w*.4,h*.8,16);em(x,'🔸',w*.6,h*.82,16);em(x,'🔹',w*.52,h*.84,16)}}
+}
+else if(S.bg){const map=S.bg=='map';x.strokeStyle=css('--tx');x.lineWidth=2;if(map)x.strokeRect(6,6,w-12,h-12);else{x.fillStyle=css('--tb');x.fillRect(w*.08,h*.58,w*.84,12)}
+g.o.forEach((o,i)=>{em(x,o[0],o[1]*w,o[2]*h);if(ST.f.includes(i)){x.strokeStyle=css('--ok');x.lineWidth=3;x.beginPath();x.arc(o[1]*w,o[2]*h,26,0,7);x.stroke()}})}
+else if(S.circ){const c=ST.c,lit=c.src&&c.con&&c.sw;x.strokeStyle=css('--tx');x.lineWidth=3;x.beginPath();x.moveTo(w*.14,h*.5);x.lineTo(w*.14,h*.2);x.lineTo(w*.4,h*.2);x.moveTo(w*.6,h*.2);x.lineTo(w*.88,h*.2);x.lineTo(w*.88,h*.4);x.moveTo(w*.14,h*.5);x.lineTo(w*.14,h*.82);if(c.con){x.lineTo(w*.88,h*.82);x.lineTo(w*.88,h*.6)}x.stroke();
+x.beginPath();x.moveTo(w*.4,h*.2);x.lineTo(c.sw?w*.6:w*.56,c.sw?h*.2:h*.1);x.stroke();em(x,'🔋',w*.14,h*.5,36);if(lit){x.fillStyle='rgba(255,210,60,.45)';x.beginPath();x.arc(w*.88,h*.5,34,0,7);x.fill()}x.globalAlpha=lit?1:.4;em(x,'💡',w*.88,h*.5,36);x.globalAlpha=1;x.fillStyle=css('--tx');x.font='14px system-ui';x.fillText(c.src?'Manba yoqiq':'Manba oʻchiq',w*.2,h*.96)}}
+requestAnimationFrame(frame)}
+addEventListener('resize',()=>{});home();frame();
+</script></body></html>
