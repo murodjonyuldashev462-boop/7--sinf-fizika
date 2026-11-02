@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="uz"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nima uchun oʻlchash kerak</title>
+<style>
+:root{--bg:#f4f1ea;--card:#fffdf8;--tx:#1f2a37;--mu:#4b5866;--ac:#2f6f8f;--act:#fff;--ok:#2e7d4f;--bad:#b3402f;--bd:#d9d2c3;--cv:#eaf3f7;--fl:#d8cdb4;--wt:#6fb3d6;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161b22;--card:#1f2630;--tx:#e8edf2;--mu:#b4c0cc;--ac:#7fc3e3;--act:#10202a;--ok:#7fd19a;--bad:#f0907f;--bd:#364250;--cv:#18222c;--fl:#2b3440;--wt:#2f6f8f;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#161b22;--card:#1f2630;--tx:#e8edf2;--mu:#b4c0cc;--ac:#7fc3e3;--act:#10202a;--ok:#7fd19a;--bad:#f0907f;--bd:#364250;--cv:#18222c;--fl:#2b3440;--wt:#2f6f8f;color-scheme:dark}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:17px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+#bar{position:sticky;top:0;z-index:5;background:var(--bg);display:flex;gap:6px;padding:8px;border-bottom:1px solid var(--bd)}
+#bar button{flex:1;min-height:44px;padding:4px}
+main{max-width:760px;margin:0 auto;padding:12px}
+h1{font-size:1.5rem;margin:.3em 0}h2{font-size:1.2rem;margin:.2em 0 .4em}p{margin:.4em 0}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px;margin:10px 0}
+button,select{font:inherit;min-height:48px;padding:8px 14px;border-radius:12px;border:2px solid var(--ac);background:var(--card);color:var(--tx);cursor:pointer}
+button.p,button.on{background:var(--ac);color:var(--act);font-weight:600}
+button:disabled{opacity:.55}
+.mod{display:block;width:100%;text-align:left;margin:8px 0;padding:14px}
+canvas{width:100%;display:block;background:var(--cv);border-radius:12px;border:1px solid var(--bd)}
+input[type=text],input[type=number]{font:inherit;width:100%;min-height:46px;padding:4px 10px;margin:4px 0;border-radius:10px;border:2px solid var(--bd);background:var(--card);color:var(--tx)}
+input[type=range]{width:100%;height:36px;accent-color:var(--ac)}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0;align-items:center}.row>input{flex:1;min-width:90px;width:auto}.ch{display:block;width:100%;text-align:left;margin:6px 0}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}.two button{text-align:left}
+.ok{color:var(--ok);font-weight:600}.bad{color:var(--bad);font-weight:600}.mu{color:var(--mu)}
+.st{padding:8px;border-radius:10px;border:1px dashed var(--bd);margin:8px 0}.hide{display:none}
+</style></head><body>
+<div id="bar" class="hide"></div>
+<main id="st"></main>
+<script>
+const $=i=>document.getElementById(i),css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const fm=n=>(+(+n).toFixed(2)).toString().replace('.',','),num=s=>parseFloat(String(s).replace(',','.')),rnd=n=>Math.floor(Math.random()*n);
+const SUM=`<div class="card"><h2>Umumiy xulosa</h2><p>1. Oʻlchash taxminni aniq son va birlikka aylantiradi, shuning uchun savdoda, tibbiyotda va qurilishda kerak.</p><p>2. Har kattalikka oʻz asbobi tanlanadi: uzunlikka ruletka, massaga tarozi, hajmga menzurka, haroratga termometr.</p><p>3. Natijani ishonchli qilish uchun koʻz shkalaga tik tutiladi, boʻlim bahosi kichik asbob tanlanadi va oʻlchash bir necha marta takrorlanib, oʻrtachasi olinadi.</p></div>`;
+const Q=[[['Aniq son va birlik beradigan usul qaysi?',['Taxmin','Oʻlchash','Qarab turish'],1,'Oʻlchash natijani son va birlik bilan beradi.'],['36 °C nimaga misol?',['Oʻlchov natijasi','Taxmin','Asbob'],0,'Son (36) va birlik (°C) bor.'],['Massani qaysi asbob oʻlchaydi?',['Chizgʻich','Termometr','Tarozi'],2,'Massa tarozi bilan oʻlchanadi.'],['Uzunlik birligi qaysi?',['kg','sm','°C'],1,'Uzunlik m, sm, mm bilan oʻlchanadi.'],['Qoʻl bilan issiqlikni aytish nega ishonchsiz?',['Har kimda har xil seziladi','Har doim aniq','Asbob yoʻq'],0,'Sezgi shaxsga bogʻliq, termometr esa aniq son beradi.']],
+[['Doʻkonda aniq tortish nega kerak?',['Adolatli narx uchun','Tez boʻlishi uchun','Chiroyli koʻrinish uchun'],0,'Notoʻgʻri tortsa, kimdir ortiqcha toʻlaydi.'],['Shifokor haroratni nima bilan oʻlchaydi?',['Tarozi','Termometr','Ruletka'],1,'Harorat termometr bilan oʻlchanadi.'],['Qurilishda uzunlikni nima bilan oʻlchaymiz?',['Ruletka','Termometr','Menzurka'],0,'Uzunlik ruletka yoki chizgʻich bilan.'],['Oshpaz suyuqlik hajmini nima bilan oʻlchaydi?',['Chizgʻich','Tarozi','Oʻlchov stakani (menzurka)'],2,'Hajm menzurka yoki oʻlchov stakani bilan.'],['Ob-havo uchun nima oʻlchanadi?',['Harorat','Faqat rang','Hech narsa'],0,'Harorat, bosim, namlik oʻlchanadi.']],
+[['Uzunlikni oʻlchaganda koʻz qanday tutiladi?',['Qiyshiq','Shkalaga tik','Yumib'],1,'Qiyshiq qarasak, natija siljiydi.'],['Natijani ishonchli qilish uchun nima qilinadi?',['Bir marta oʻlchanadi','Bir necha marta oʻlchab, oʻrtachasi olinadi','Taxmin qilinadi'],1,'Takroriy oʻlchash tasodifiy xatoni kamaytiradi.'],['Boʻlim bahosi kichik asbob:',['Aniqroq','Noaniqroq','Farqi yoʻq'],0,'Mayda boʻlimlar aniqroq oʻqishga imkon beradi.'],['24,1; 23,9; 24,0 ning oʻrtachasi?',['24,0','24,5','23,0'],0,'(24,1 + 23,9 + 24,0) / 3 = 24,0.'],['Oʻlchash xatosining sababi:',['Koʻz holati','Devor rangi','Soat'],0,'Koʻz holati va asbob boʻlim bahosi xatoga sabab boʻladi.']]];
+const S1=[['Choy issiq.',0],['Choy harorati 65 °C.',1],['Stol uzun.',0],['Stol uzunligi 120 sm.',1],['Sumka ogʻir.',0],['Sumka massasi 3 kg.',1]];
+const S2=[['Bemorning haroratini bilish',0],['Parda uchun deraza uzunligi',1],['Dori shirinligi hajmi',3],['Un massasi',2],['Yuguruvchi vaqti',4]];
+const OB=['Termometr','Ruletka','Tarozi','Menzurka','Sekundomer'];
+const MT=[['Shifokor','Termometr'],['Quruvchi','Ruletka'],['Sotuvchi','Tarozi'],['Oshpaz','Menzurka']];
+const UN={Uzunlik:['mm','sm','m','km'],Massa:['g','kg'],Hajm:['ml','l'],Harorat:['°C'],Vaqt:['s','min','soat']};
+const M=[{n:'1-reja. Oʻlchash nima va nega kerak',d:'Taxmin va oʻlchash farqi',s:[
+{t:'Savol',tx:'Ikki stakan suvdan qaysi biri issiqroq? Avval taxmin qiling, keyin termometr bilan oʻlchang.',k:'sim',d:'glass',v:['Chap issiqroq','Oʻng issiqroq','Bir xil']},
+{t:'Tushuntirish',tx:'Gap taxminmi yoki oʻlchov natijasi?',k:'seq',o:['Taxmin','Oʻlchov natijasi'],it:S1,h:'Gapda son va birlik bormi? Tekshiring.',ex:['Son va birlik yoʻq: bu taxmin.','Son va birlik bor: bu oʻlchov natijasi.']},
+{t:'Amaliy ish: virtual stol',tx:'3 ta jismni oʻlchang, natijani sonini va birligini jadvalga yozing.',k:'meas'},
+{t:'Mustahkamlash',tx:'5 savolli test.',k:'quiz',q:0},
+{t:'Uy vazifasi',tx:'Uydagi 3 ta narsani oʻlchab, kattalik, son va birligini kiriting.',k:'home1'}]},
+{n:'2-reja. Hayotda oʻlchashning ahamiyati',d:'Savdo, tibbiyot, qurilish',s:[
+{t:'Savol',tx:'Doʻkonda mahsulot "taxminan 1 kg" deb sotilsa nima boʻladi? Tortishni tanlang va narxni sozlang.',k:'sim',d:'scale',v:['1 kg (1000 g)','900 g','1100 g'],sl:['pr','1 kg narxi',5000,20000,1000,10000,' soʻm']},
+{t:'Tushuntirish',tx:'Kasbni asbobiga juftlang: avval chapdan, keyin oʻngdan tanlang.',k:'match'},
+{t:'Amaliy ish: kerakli asbobni tanla',tx:'5 ta vaziyat uchun mos asbobni tanlang.',k:'seq',o:OB,it:S2,h:'Qaysi kattalik oʻlchanadi? Shunga mos asbobni tanlang.',ex:['Harorat termometr bilan oʻlchanadi.','Uzunlik ruletka bilan oʻlchanadi.','Massa tarozi bilan oʻlchanadi.','Hajm menzurka bilan oʻlchanadi.','Vaqt sekundomer bilan oʻlchanadi.']},
+{t:'Mustahkamlash',tx:'5 savolli test.',k:'quiz',q:1},
+{t:'Uy vazifasi',tx:'Oilada oʻlchash ishlatiladigan 3 ta holatni yozing.',k:'list',ph:'Masalan: Oshxonada un tortiladi'}]},
+{n:'3-reja. Oʻlchash aniqligi',d:'Xato va oʻrtacha qiymat',s:[
+{t:'Savol',tx:'Bir stolni ikki oʻquvchi oʻlchab, har xil natija oldi. Nima uchun? B ning qarash burchagini oʻzgartiring.',k:'sim',d:'eyes',sl:['ag','B ning qarash burchagi',0,40,5,25,'°']},
+{t:'Tushuntirish',tx:'Boʻlim bahosini tanlang va natija aniqligini koʻring.',k:'sim',d:'ruler',v:['1 sm','0,5 sm','1 mm']},
+{t:'Amaliy ish: 5 marta oʻlchash',tx:'Jismni 5 marta oʻlchang, oʻrtachasini oʻzingiz hisoblang.',k:'five'},
+{t:'Mustahkamlash',tx:'5 savolli test.',k:'quiz',q:2},
+{t:'Uy vazifasi',tx:'Bir narsani 3 marta oʻlchab, oʻrtachasini toping.',k:'avg3'}]}];
+let mi=-1,si=0,ST={},S=null,cv=null;
+function home(){mi=-1;$('bar').classList.add('hide');S=null;cv=null;$('st').innerHTML=`<h1>Nima uchun oʻlchash kerak?</h1><p>Oʻlchash fizikaning asosi: u taxminni aniq natijaga aylantiradi. 3 ta reja, har birida 5 bosqich. Rejani tanlang:</p>`+M.map((m,i)=>`<button class="card mod" data-a="o" data-m="${i}"><b>${m.n}</b><br><span class="mu">${m.d}</span></button>`).join('')+SUM;scrollTo(0,0)}
+function open_(m,s){mi=m;si=s;ST={};R()}
+function R(){const g=M[mi].s[si],b=$('bar'),k=g.k;b.classList.remove('hide');b.innerHTML='<button data-a="h">⌂</button>'+[0,1,2,3,4].map(i=>`<button data-a="o" data-m="${mi}" data-s="${i}" class="${i==si?'on':''}">${i+1}</button>`).join('');
+let h=`<div class="card"><h2>${si+1}. ${g.t}</h2><p>${g.tx}</p>`;S=null;
+if(k=='sim'){ST.v=g.v?-1:0;S={d:g.d,p:0,run:false,dd:[1,.5,.1][0]};if(g.v)h+='<div class="row">'+g.v.map((t,i)=>`<button data-a="v" data-i="${i}">${t}</button>`).join('')+'</div>';
+if(g.sl){const q=g.sl;h+=`<label>${q[1]}: <b id="so">${q[5]}</b>${q[6]}<input type="range" id="${q[0]}" min="${q[2]}" max="${q[3]}" step="${q[4]}" value="${q[5]}"></label>`}
+h+='<canvas id="cv" height="230"></canvas><div class="row"><button class="p" data-a="run">Ishga tushirish</button></div><p id="rs"></p>'}
+if(k=='seq'){ST.i=0;h+='<div id="sq"></div>'}
+if(k=='meas'){const V=[['✏️ Qalam uzunligi','Chizgʻich',12+rnd(13)/2,'sm'],['🍎 Olma massasi','Tarozi',120+rnd(9)*10,'g'],['🥤 Suv harorati','Termometr',20+rnd(40),'°C']];ST.m=V;h+=V.map((v,i)=>`<div class="st"><b>${v[0]}</b> <button data-a="ms" data-i="${i}">${v[1]} bilan oʻlchash</button><p id="mr${i}" class="mu"></p><div class="row"><input type="number" step="any" id="mv${i}" placeholder="Son"><select id="mu${i}"><option value="">Birlik</option>${['sm','m','g','kg','ml','°C','s'].map(u=>`<option>${u}</option>`).join('')}</select><button class="p" data-a="mc" data-i="${i}">Tekshirish</button></div><p id="mf${i}"></p></div>`).join('')+'<div id="rs"></div>';ST.dn=[]}
+if(k=='match'){ST.sel=-1;ST.dn=[];h+='<div class="two"><div>'+MT.map((p,i)=>`<button class="ch" data-a="l" data-i="${i}">${p[0]}</button>`).join('')+'</div><div>'+[2,0,3,1].map(i=>`<button class="ch" data-a="r" data-i="${i}">${MT[i][1]}</button>`).join('')+'</div></div><p id="rs"></p>'}
+if(k=='quiz'){ST.a=[];h+=Q[g.q].map((q,i)=>`<div class="st"><b>${i+1}. ${q[0]}</b>`+q[1].map((o,j)=>`<button class="ch" data-a="q" data-i="${i}" data-j="${j}">${o}</button>`).join('')+'</div>').join('')+'<div class="row"><button class="p" data-a="qc">Tekshirish</button></div><div id="rs"></div>'}
+if(k=='list'){h+=[1,2,3].map(i=>`<input type="text" id="li${i}" placeholder="${i}. ${g.ph}">`).join('')+'<div class="row"><button class="p" data-a="lc">Roʻyxat qilish</button></div><div id="rs"></div>'}
+if(k=='home1'){h+=[1,2,3].map(i=>`<div class="st"><input type="text" id="hn${i}" placeholder="${i}. Narsa nomi"><div class="row"><select id="hk${i}"><option value="">Kattalik</option>${Object.keys(UN).map(u=>`<option>${u}</option>`).join('')}</select><input type="number" step="any" id="hv${i}" placeholder="Son"><select id="hu${i}"><option value="">Birlik</option>${['mm','sm','m','km','g','kg','ml','l','°C','s','min','soat'].map(u=>`<option>${u}</option>`).join('')}</select></div></div>`).join('')+'<div class="row"><button class="p" data-a="hc">Tekshirish</button></div><div id="rs"></div>'}
+if(k=='five'){ST.vals=[];h+='<div class="row"><button class="p" data-a="fm">Oʻlchash (1/5)</button></div><p id="fl"></p><div id="fa" class="hide"><div class="row"><input type="number" step="any" id="fv" placeholder="Oʻrtacha (sm)"><button class="p" data-a="fc">Tekshirish</button></div></div><p id="rs"></p>'}
+if(k=='avg3'){h+='<div class="row"><input type="number" step="any" id="a1" placeholder="1-natija"><input type="number" step="any" id="a2" placeholder="2-natija"><input type="number" step="any" id="a3" placeholder="3-natija"></div><div class="row"><input type="number" step="any" id="av" placeholder="Oʻrtacha"><button class="p" data-a="ac">Tekshirish</button></div><p id="rs"></p>'}
+h+='</div><div class="row"><button data-a="pv" '+(si?'':'disabled')+'>← Oldingi</button><button class="p" data-a="nx">'+(si<4?'Keyingi →':'Yakunlash')+'</button></div>'+(si==4?SUM:'');
+$('st').innerHTML=h;cv=$('cv');if(k=='seq')sqR();scrollTo(0,0)}
+function sqR(){const g=M[mi].s[si];if(ST.i>=g.it.length){$('sq').innerHTML='<p class="ok">Barakalla! Hammasi toʻgʻri.</p>';return}const it=g.it[ST.i];$('sq').innerHTML=`<p><b>${ST.i+1}/${g.it.length}. ${it[0]}</b></p>`+g.o.map((t,j)=>`<button class="ch" data-a="sq" data-j="${j}">${t}</button>`).join('')+'<p id="sm"></p>'}
+document.addEventListener('input',e=>{if(e.target.type=='range'&&$('so'))$('so').textContent=e.target.value});
+$('bar').onclick=$('st').onclick=e=>{const b=e.target.closest('[data-a]');if(!b||b.disabled)return;const a=b.dataset.a,i=+b.dataset.i,g=mi>=0?M[mi].s[si]:null,rs=$('rs');
+if(a=='o')open_(+b.dataset.m,+(b.dataset.s||0));else if(a=='h')home();else if(a=='nx')si<4?open_(mi,si+1):home();else if(a=='pv')open_(mi,si-1);
+else if(a=='v'){ST.v=i;[...b.parentNode.children].forEach((c,k)=>c.classList.toggle('on',k==i));S.p=0;S.run=false;rs.textContent=''}
+else if(a=='run'){if(ST.v<0){rs.innerHTML='<span class="bad">Avval variantni tanlang.</span>';return}rs.textContent='';S.p=0;S.run=true;S.v=ST.v;
+if(S.d=='glass'){const t=30+rnd(30),df=1+rnd(3),L=rnd(2);S.t=L?[t,t+df]:[t+df,t]}
+if(S.d=='scale'){S.w=[1000,900,1100][ST.v];S.pr=+$('pr').value}
+if(S.d=='ruler')S.dd=[1,.5,.1][ST.v]}
+else if(a=='sq'){const it=g.it[ST.i],j=+b.dataset.j;if(j==it[1]){const m=g.ex?(g.ex.length==2?g.ex[it[1]]:g.ex[ST.i]):'';ST.i++;sqR();if(ST.i<g.it.length)$('sm').innerHTML=`<span class="ok">Toʻgʻri! ${m}</span>`;else $('sq').innerHTML+=`<p class="mu">${m}</p>`}else $('sm').innerHTML=`<span class="bad">Xato. Maslahat: ${g.h}</span>`}
+else if(a=='ms'){const v=ST.m[i];ST['r'+i]=v[2];$('mr'+i).textContent=v[1]+' koʻrsatdi: '+fm(v[2])}
+else if(a=='mc'){const v=ST.m[i],f=$('mf'+i);if(ST['r'+i]===undefined){f.innerHTML='<span class="bad">Avval jismni oʻlchang.</span>';return}const n=num($('mv'+i).value),u=$('mu'+i).value;
+if(u!=v[3]){f.innerHTML='<span class="bad">Birlik mos emas. Maslahat: uzunlik — sm, massa — g, harorat — °C.</span>';return}if(Math.abs(n-v[2])>.01){f.innerHTML='<span class="bad">Son notoʻgʻri. Asbob koʻrsatgan sonni qayta oʻqing.</span>';return}
+f.innerHTML=`<span class="ok">Toʻgʻri: ${fm(n)} ${u}</span>`;if(!ST.dn.includes(i))ST.dn.push(i);if(ST.dn.length==3)rs.innerHTML='<p class="ok">Jadval toʻldi! Har natija son va birlikdan iborat.</p>'}
+else if(a=='l'){ST.sel=i;document.querySelectorAll('[data-a=l]').forEach(c=>c.classList.toggle('on',+c.dataset.i==i))}
+else if(a=='r'){if(ST.sel<0){rs.innerHTML='<span class="bad">Avval chapdan kasbni tanlang.</span>';return}
+if(i==ST.sel){ST.dn.push(i);document.querySelectorAll(`[data-i="${i}"][data-a=l],[data-i="${i}"][data-a=r]`).forEach(c=>{c.disabled=true;c.classList.remove('on')});ST.sel=-1;rs.innerHTML=ST.dn.length==4?'<span class="ok">Barakalla! Hammasi juftlandi.</span>':'<span class="ok">Toʻgʻri juft!</span>'}else rs.innerHTML='<span class="bad">Mos emas. Kasb qaysi kattalikni oʻlchashini oʻylang.</span>'}
+else if(a=='q'){ST.a[i]=+b.dataset.j;document.querySelectorAll(`[data-a=q][data-i="${i}"]`).forEach(c=>c.classList.toggle('on',c==b))}
+else if(a=='qc'){const Z=Q[g.q];if(ST.a.filter(x=>x!==undefined).length<5){rs.innerHTML='<p class="bad">Hamma savolga javob bering.</p>';return}let s=0,er='';Z.forEach((q,i)=>{if(ST.a[i]==q[2])s++;else er+=`<p class="bad">${i+1}-savol: toʻgʻri javob — “${q[1][q[2]]}”. <span class="mu">${q[3]}</span></p>`});rs.innerHTML=`<h2>Natija: ${s} / 5</h2>`+(er||'<p class="ok">Hammasi toʻgʻri!</p>')}
+else if(a=='lc'){const v=[1,2,3].map(n=>$('li'+n).value.trim()).filter(Boolean);rs.innerHTML=v.length<3?'<p class="bad">3 ta holatni yozing.</p>':'<p class="ok">Sizning roʻyxatingiz:</p><ol>'+v.map(t=>`<li>${t.replace(/</g,'&lt;')}</li>`).join('')+'</ol>'}
+else if(a=='hc'){let m='',ok=0;[1,2,3].forEach(n=>{const nm=$('hn'+n).value.trim()||n+'-narsa',k=$('hk'+n).value,u=$('hu'+n).value,v=num($('hv'+n).value);
+if(!k||!u||isNaN(v))m+=`<p class="bad">${nm}: kattalik, son va birlikni toʻldiring.</p>`;else if(!UN[k].includes(u))m+=`<p class="bad">${nm}: “${u}” — ${k.toLowerCase()} birligi emas. ${k} uchun: ${UN[k].join(', ')}.</p>`;else{ok++;m+=`<p class="ok">${nm}: ${fm(v)} ${u} — toʻgʻri.</p>`}});rs.innerHTML=m+(ok==3?'<p class="ok">Barakalla!</p>':'')}
+else if(a=='fm'){if(ST.vals.length>=5)return;ST.vals.push(+(24+(rnd(7)-3)/10).toFixed(1));$('fl').innerHTML='Natijalar (sm): <b>'+ST.vals.map(fm).join('; ')+'</b>';b.textContent=ST.vals.length<5?`Oʻlchash (${ST.vals.length+1}/5)`:'Oʻlchash tugadi';if(ST.vals.length==5){b.disabled=true;$('fa').classList.remove('hide');const mx=Math.max(...ST.vals),mn=Math.min(...ST.vals);$('fl').innerHTML+=`<br>Eng katta – eng kichik = ${fm(mx-mn)} sm. Natijalar bir xil emas, shuning uchun oʻrtachani hisoblaymiz.`}}
+else if(a=='fc'){const n=num($('fv').value),m=ST.vals.reduce((x,y)=>x+y,0)/5;if(isNaN(n))return;rs.innerHTML=Math.abs(n-m)<=.05?`<span class="ok">Toʻgʻri! Oʻrtacha = ${fm(m)} sm. Bu bitta oʻlchashdan ishonchliroq.</span>`:'<span class="bad">Xato. Maslahat: 5 ta natijani qoʻshing va 5 ga boʻling.</span>'}
+else if(a=='ac'){const v=['a1','a2','a3'].map(x=>num($(x).value)),n=num($('av').value);if(v.some(isNaN)||isNaN(n)){rs.innerHTML='<span class="bad">Hamma maydonni toʻldiring.</span>';return}const m=(v[0]+v[1]+v[2])/3;rs.innerHTML=Math.abs(n-m)<=.01?`<span class="ok">Toʻgʻri! Oʻrtacha = ${fm(m)}.</span>`:`<span class="bad">Xato. Maslahat: uchta natijani qoʻshib 3 ga boʻling. Toʻgʻri javob: ${fm(m)}.</span>`}};
+function fin(){const rs=$('rs');if(!rs)return;let m='';
+if(S.d=='glass'){const[a,b]=S.t,r=a>b?0:1,ok=ST.v==r;m=`Termometr: chap ${a} °C, oʻng ${b} °C. <span class="${ok?'ok':'bad'}">${ok?'Taxmin toʻgʻri chiqdi.':'Taxmin xato chiqdi.'}</span> Farq faqat ${Math.abs(a-b)} °C: qoʻl bilan aniqlash qiyin, oʻlchash esa aniq.`}
+if(S.d=='scale'){const c=S.pr,r=S.w/1000*c,d=c-r;m=`Siz 1 kg narxini (${c} soʻm) toʻladingiz, tarozi ${S.w} g koʻrsatdi. Haqiqiy narx: ${fm(r)} soʻm. `+(d>0?`<span class="bad">Siz ${fm(d)} soʻm ortiqcha toʻladingiz.</span>`:d<0?`<span class="bad">Sotuvchi ${fm(-d)} soʻm yoʻqotdi.</span>`:'<span class="ok">Hisob teng, hech kim yutqazmadi.</span>')+' Aniq oʻlchash adolat uchun kerak.'}
+if(S.d=='eyes'){const a=+$('ag').value;m=`A (tik qaradi): 120,0 sm. B: ${fm(120-.08*a)} sm. Farq: ${fm(.08*a)} sm. <span class="${a?'bad':'ok'}">${a?'Sabab: B koʻzni shkalaga tik tutmadi.':'Ikkalasi tik qaradi, natijalar bir xil.'}</span>`}
+if(S.d=='ruler'){const r=Math.round(12.37/S.dd*1e6)/1e6*S.dd;m=`Ko'rsatkich: <b>${fm(r)} sm</b>. Haqiqiy uzunlik 12,37 sm, xato: ${fm(Math.abs(r-12.37))} sm. Boʻlim bahosi ${fm(S.dd)} sm boʻlsa, aniqlik ±${fm(S.dd/2)} sm. Boʻlim bahosi kichik asbob aniqroq.`}
+rs.innerHTML=m.replace("Ko'rsatkich","Koʻrsatkich")}
+function fit(){const w=cv.clientWidth,d=devicePixelRatio||1,h=+cv.getAttribute('height');cv.width=w*d;cv.height=h*d;const x=cv.getContext('2d');x.setTransform(d,0,0,d,0,0);return[x,w,h]}
+const em=(x,e,X,Y,s)=>{x.font=(s||32)+'px serif';x.textAlign='center';x.textBaseline='middle';x.fillText(e,X,Y)};
+function frame(){if(cv&&S&&document.body.contains(cv)){const[x,w,h]=fit(),p=S.p,tx=css('--tx');x.fillStyle=css('--fl');x.fillRect(0,h*.78,w,h*.22);x.fillStyle=tx;x.strokeStyle=tx;x.lineWidth=2;
+if(S.run){S.p=Math.min(1,S.p+.012);if(S.p>=1){S.run=false;fin()}}
+if(S.d=='glass'){[.3,.7].forEach((f,i)=>{const X=w*f;x.fillStyle=css('--wt');x.globalAlpha=.7;x.fillRect(X-40,h*.35,80,h*.43);x.globalAlpha=1;x.strokeRect(X-40,h*.2,80,h*.58);x.fillStyle=tx;x.font='16px system-ui';x.textAlign='center';x.fillText(i?'Oʻng':'Chap',X,h*.88);if(S.t&&p>.4){em(x,'🌡️',X,h*.12,26);x.font='bold 18px system-ui';x.fillText(Math.round(S.t[i]*Math.min(1,(p-.4)/.4))+' °C',X+40,h*.12)}})}
+if(S.d=='scale'){x.fillStyle=css('--cv');x.fillRect(w*.3,h*.7,w*.4,12);x.strokeRect(w*.3,h*.7,w*.4,12);em(x,'🛍️',w*.5,h*.7-30-(1-Math.min(1,p*3))*40,44);x.fillStyle=tx;x.font='bold 22px system-ui';x.textAlign='center';x.fillText(S.w?Math.round(S.w*Math.min(1,p*1.5))+' g':'— g',w*.5,h*.18);x.font='15px system-ui';x.fillText('1 kg narxi: '+($('pr')?$('pr').value:'')+' soʻm',w*.5,h*.9)}
+if(S.d=='eyes'){const a=+($('ag')?$('ag').value:25),x0=w*.08,x1=w*.92,X=c=>x0+(x1-x0)*(c-100)/40,ry=h*.75;x.fillStyle=css('--card');x.fillRect(x0,ry,x1-x0,26);x.strokeRect(x0,ry,x1-x0,26);x.fillStyle=tx;x.font='13px system-ui';x.textAlign='center';for(let c=100;c<=140;c+=2){x.beginPath();x.moveTo(X(c),ry);x.lineTo(X(c),ry+(c%10?8:14));x.stroke();if(c%10==0)x.fillText(c,X(c),ry+22)}
+x.fillStyle=css('--ac');x.fillRect(X(100),h*.5,X(120)-X(100),h*.08);x.fillStyle=tx;em(x,'👁️',X(120),h*.14,30);x.fillText('A',X(120)+22,h*.14);x.beginPath();x.moveTo(X(120),h*.2);x.lineTo(X(120),ry);x.stroke();
+const ex=X(120-.08*a);x.strokeStyle=css('--bad');const eb=X(120)+(X(120)-ex)*(.4/.17);x.beginPath();x.moveTo(eb,h*.2);x.lineTo(ex,ry);x.stroke();em(x,'👁️',eb,h*.14,30);x.fillStyle=css('--bad');x.fillText('B',eb+22,h*.14)}
+if(S.d=='ruler'){const dd=S.dd,x0=w*.06,x1=w*.94,X=c=>x0+(x1-x0)*(c-11.5)/2,ry=h*.55;x.fillStyle=css('--card');x.fillRect(x0,ry,x1-x0,50);x.strokeRect(x0,ry,x1-x0,50);x.fillStyle=css('--ac');x.fillRect(x0,h*.2,X(12.37)-x0,h*.12);x.fillStyle=tx;x.textAlign='center';x.font='14px system-ui';
+for(let c=Math.ceil(11.5/dd-1e-9)*dd;c<=13.5+1e-9;c+=dd){const big=Math.abs(c-Math.round(c))<1e-6;x.beginPath();x.moveTo(X(c),ry);x.lineTo(X(c),ry+(big?24:12));x.stroke();if(big)x.fillText(Math.round(c),X(c),ry+40)}
+const r=Math.round(12.37/dd)*dd,mx=x0+(X(r)-x0)*Math.min(1,p*1.3);if(S.v!==undefined){x.fillStyle=css('--bad');x.beginPath();x.moveTo(mx,ry+52);x.lineTo(mx-9,ry+72);x.lineTo(mx+9,ry+72);x.fill()}x.fillStyle=tx;x.fillText('Jism uchi: 12,37 sm',X(12.37),h*.38)}}
+requestAnimationFrame(frame)}
+home();frame();
+</script></body></html>
